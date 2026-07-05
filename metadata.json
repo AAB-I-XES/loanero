@@ -1,0 +1,6 @@
+{
+  "name": "Loan Ledger",
+  "description": "Track loans, interest, payments, and balances for members of a group.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

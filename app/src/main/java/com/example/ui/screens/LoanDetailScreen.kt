@@ -284,10 +284,10 @@ fun LoanFinancialsCard(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                FinancialItem(label = "Principal", value = "$${loan.principalAmount}")
+                FinancialItem(label = "Principal", value = "₹${loan.principalAmount}")
                 FinancialItem(
                     label = "Accrued Interest",
-                    value = "$$interestAmount",
+                    value = "₹$interestAmount",
                     subtext = when (loan.interestType) {
                         "FIXED" -> "Fixed Fee"
                         "MONTHLY_SIMPLE" -> "${loan.interestRate}% Monthly"
@@ -295,17 +295,17 @@ fun LoanFinancialsCard(
                         else -> "None"
                     }
                 )
-                FinancialItem(label = "Total Owed", value = "$${summary.totalOwed}", isBold = true)
+                FinancialItem(label = "Total Owed", value = "₹${summary.totalOwed}", isBold = true)
             }
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                FinancialItem(label = "Total Returned", value = "$${summary.totalReturned}", color = MaterialTheme.colorScheme.primary)
+                FinancialItem(label = "Total Returned", value = "₹${summary.totalReturned}", color = MaterialTheme.colorScheme.primary)
                 FinancialItem(
                     label = "Pending Balance",
-                    value = "$${summary.totalPending}",
+                    value = "₹${summary.totalPending}",
                     color = if (summary.totalPending > 0) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
                     isBold = true
                 )
@@ -451,7 +451,7 @@ fun RepaymentItemRow(
 
             Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
                 Text(
-                    text = "Amount Returned: $${repayment.amount}",
+                    text = "Amount Returned: ₹${repayment.amount}",
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Bold
                 )
@@ -558,7 +558,7 @@ fun RecordRepaymentDialog(
                         amountText = it
                         if (it.toDoubleOrNull() != null) amountError = null
                     },
-                    label = { Text("Amount Returned ($) *") },
+                    label = { Text("Amount Returned (₹) *") },
                     placeholder = { Text("0.00") },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                     isError = amountError != null,

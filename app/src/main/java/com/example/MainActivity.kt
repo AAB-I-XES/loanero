@@ -7,13 +7,18 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.CalendarMonth
+import androidx.compose.material.icons.rounded.Handshake
+import androidx.compose.material3.*
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.data.AppDatabase
@@ -40,8 +45,48 @@ class MainActivity : ComponentActivity() {
           LoanViewModel.Factory(repository)
         }
         val navController = rememberNavController()
+        val navBackStackEntry by navController.currentBackStackEntryAsState()
+        val currentRoute = navBackStackEntry?.destination?.route
 
-        Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+        Scaffold(
+          modifier = Modifier.fillMaxSize(),
+          bottomBar = {
+            if (currentRoute == "dashboard" || currentRoute == "monthly_collection") {
+              NavigationBar(
+                modifier = Modifier.testTag("bottom_nav_bar")
+              ) {
+                NavigationBarItem(
+                  selected = currentRoute == "dashboard",
+                  onClick = {
+                    if (currentRoute != "dashboard") {
+                      navController.navigate("dashboard") {
+                        popUpTo("dashboard") { inclusive = false }
+                        launchSingleTop = true
+                      }
+                    }
+                  },
+                  icon = { Icon(Icons.Rounded.Handshake, contentDescription = "Loans") },
+                  label = { Text("Loans") },
+                  modifier = Modifier.testTag("nav_loans_tab")
+                )
+                NavigationBarItem(
+                  selected = currentRoute == "monthly_collection",
+                  onClick = {
+                    if (currentRoute != "monthly_collection") {
+                      navController.navigate("monthly_collection") {
+                        popUpTo("dashboard") { inclusive = false }
+                        launchSingleTop = true
+                      }
+                    }
+                  },
+                  icon = { Icon(Icons.Rounded.CalendarMonth, contentDescription = "Monthly Collection") },
+                  label = { Text("Collection") },
+                  modifier = Modifier.testTag("nav_collection_tab")
+                )
+              }
+            }
+          }
+        ) { innerPadding ->
           NavHost(
             navController = navController,
             startDestination = "dashboard",
@@ -59,6 +104,20 @@ class MainActivity : ComponentActivity() {
                 },
                 onAddMemberClick = {
                   navController.navigate("add_member")
+                }
+              )
+            }
+
+            composable("monthly_collection") {
+              val membersList by viewModel.members.collectAsState()
+
+              MonthlyCollectionScreen(
+                members = membersList,
+                onToggleCollected = { member ->
+                  viewModel.toggleMonthlyCollected(member)
+                },
+                onResetCollections = {
+                  viewModel.resetMonthlyCollections()
                 }
               )
             }

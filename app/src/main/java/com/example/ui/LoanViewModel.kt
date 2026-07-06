@@ -189,6 +189,22 @@ class LoanViewModel(private val repository: LoanRepository) : ViewModel() {
         }
     }
 
+    fun toggleMonthlyCollected(member: Member) {
+        viewModelScope.launch {
+            repository.updateMember(member.copy(isMonthlyCollected = !member.isMonthlyCollected))
+        }
+    }
+
+    fun resetMonthlyCollections() {
+        viewModelScope.launch {
+            members.value.forEach { member ->
+                if (member.isMonthlyCollected) {
+                    repository.updateMember(member.copy(isMonthlyCollected = false))
+                }
+            }
+        }
+    }
+
     fun deleteMember(member: Member) {
         viewModelScope.launch {
             repository.deleteMember(member)

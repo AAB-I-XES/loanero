@@ -128,9 +128,9 @@ fun AddLoanScreen(
                     principalText = it
                     if (it.toDoubleOrNull() != null) principalError = null
                 },
-                label = { Text("Loan Principal Amount ($) *") },
+                label = { Text("Loan Principal Amount (₹) *") },
                 placeholder = { Text("0.00") },
-                leadingIcon = { Icon(Icons.Rounded.AttachMoney, contentDescription = "Money Icon") },
+                leadingIcon = { Icon(Icons.Rounded.CurrencyRupee, contentDescription = "Money Icon") },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                 modifier = Modifier
                     .fillMaxWidth()
@@ -197,7 +197,7 @@ fun AddLoanScreen(
 
             // Interest Rate Field
             val rateLabel = when (interestType) {
-                "FIXED" -> "Fixed Interest Amount ($)"
+                "FIXED" -> "Fixed Interest Amount (₹)"
                 "MONTHLY_SIMPLE" -> "Monthly Interest Rate (%)"
                 "YEARLY_SIMPLE" -> "Yearly Interest Rate (%)"
                 else -> "Interest Rate"
@@ -216,7 +216,7 @@ fun AddLoanScreen(
                 placeholder = { Text(ratePlaceholder) },
                 leadingIcon = {
                     Icon(
-                        imageVector = if (interestType == "FIXED") Icons.Rounded.AttachMoney else Icons.Rounded.Percent,
+                        imageVector = if (interestType == "FIXED") Icons.Rounded.CurrencyRupee else Icons.Rounded.Percent,
                         contentDescription = "Rate Icon"
                     )
                 },

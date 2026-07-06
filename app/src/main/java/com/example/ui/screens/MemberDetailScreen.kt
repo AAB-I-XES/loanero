@@ -268,19 +268,19 @@ fun MemberStatsView(summary: MemberSummary) {
         ) {
             StatBox(
                 label = "Total Borrowed",
-                value = "$${summary.totalPrincipalAmount}",
+                value = "₹${summary.totalPrincipalAmount}",
                 color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.weight(1f)
             )
             StatBox(
                 label = "Total Returned",
-                value = "$${summary.totalReturnedAmount}",
+                value = "₹${summary.totalReturnedAmount}",
                 color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.weight(1f)
             )
             StatBox(
                 label = "Remaining Due",
-                value = "$${summary.totalPendingAmount}",
+                value = "₹${summary.totalPendingAmount}",
                 color = if (summary.totalPendingAmount > 0) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
                 modifier = Modifier.weight(1.1f)
             )
@@ -342,7 +342,7 @@ fun LoanSummaryCard(
     }
 
     val interestDetailText = when (loan.interestType) {
-        "FIXED" -> "Fixed Interest of $${loan.interestRate}"
+        "FIXED" -> "Fixed Interest of ₹${loan.interestRate}"
         "MONTHLY_SIMPLE" -> "${loan.interestRate}% Monthly Simple"
         "YEARLY_SIMPLE" -> "${loan.interestRate}% Yearly Simple"
         else -> "No Interest"
@@ -435,7 +435,7 @@ fun LoanSummaryCard(
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Text(
-                        text = "$${loan.principalAmount}",
+                        text = "₹${loan.principalAmount}",
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.SemiBold
                     )
@@ -447,7 +447,7 @@ fun LoanSummaryCard(
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Text(
-                        text = "$${summary.totalOwed}",
+                        text = "₹${summary.totalOwed}",
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.SemiBold
                     )
@@ -459,7 +459,7 @@ fun LoanSummaryCard(
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Text(
-                        text = "$${summary.totalPending}",
+                        text = "₹${summary.totalPending}",
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.Black,
                         color = if (summary.totalPending > 0) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
@@ -483,7 +483,7 @@ fun LoanSummaryCard(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = "Paid: $${summary.totalReturned}",
+                        text = "Paid: ₹${summary.totalReturned}",
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )

@@ -243,7 +243,7 @@ fun StatsDashboard(stats: DashboardStats) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "$${stats.totalPending}",
+                    text = "₹${stats.totalPending}",
                     style = MaterialTheme.typography.headlineLarge,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onPrimaryContainer
@@ -284,7 +284,7 @@ fun StatsDashboard(stats: DashboardStats) {
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "$${stats.totalPrincipalLoaned}",
+                        text = "₹${stats.totalPrincipalLoaned}",
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onPrimaryContainer
@@ -301,7 +301,7 @@ fun StatsDashboard(stats: DashboardStats) {
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "$${stats.totalReturned}",
+                        text = "₹${stats.totalReturned}",
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold,
                         color = Color(0xFF1B5E20)
@@ -405,7 +405,7 @@ fun MemberRowCard(
             ) {
                 if (summary.totalPendingAmount > 0) {
                     Text(
-                        text = "$${summary.totalPendingAmount}",
+                        text = "₹${summary.totalPendingAmount}",
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Black,
                         color = Color(0xFFEF5350)
@@ -418,7 +418,7 @@ fun MemberRowCard(
                     )
                 } else if (summary.totalLoansCount > 0) {
                     Text(
-                        text = "$0",
+                        text = "₹0",
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)

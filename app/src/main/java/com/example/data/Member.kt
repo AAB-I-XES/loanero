@@ -10,5 +10,6 @@ data class Member(
     val phone: String = "",
     val email: String = "",
     val notes: String = "",
+    val isMonthlyCollected: Boolean = false,
     val createdAt: Long = System.currentTimeMillis()
 )

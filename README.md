@@ -1,11 +1,11 @@
-# CircleCredit
+# LOAD LEDGER
 
-CircleCredit is a modern, visually stunning peer-to-peer ledger and monthly credit-union manager application built for Android using Jetpack Compose and Kotlin. It serves as a single-point ledger for social groups, friends, and family ("Sunday Groups") to seamlessly track personal peer-to-peer loans, dynamic interest rates, and automated monthly recurring collections.
+LOAD LEDGER is a modern, visually stunning peer-to-peer ledger and monthly credit-union manager application built for Android using Jetpack Compose and Kotlin. It serves as a single-point ledger for social groups, friends, and family ("Sunday Groups") to seamlessly track personal peer-to-peer loans, dynamic interest rates, and automated monthly recurring collections.
 
 ---
 
 ## 🎨 Design Philosophy & Theme
-CircleCredit is built entirely on the modern **Material Design 3 (M3)** specification:
+LOAN LEDGER is built entirely on the modern **Material Design 3 (M3)** specification:
 * **Slate Blue Minimalist Palette**: Deep premium blues, soft background slates, crisp clean whites, and semantic accent colors to reduce cognitive load.
 * **Proportional Spacing**: Adheres to a strict 8dp spacing grid, with generous negative space and comfortable 48dp+ interactive touch targets for absolute ease of use.
 * **Adaptive Styling**: Modern rounded card designs (`24dp` and `16dp` corners), high-contrast icons, and customized visual avatars to easily identify members at a glance.
@@ -36,7 +36,7 @@ CircleCredit is built entirely on the modern **Material Design 3 (M3)** specific
 ---
 
 ## 🏗️ Architecture & Stack
-CircleCredit adheres to modern Android architecture principles:
+LOAN LEDGER adheres to modern Android architecture principles:
 * **UI Layer**: Built entirely on **Jetpack Compose** with state managed via **ViewModel** and **MutableStateFlow** observing real-time database state.
 * **Data Layer**: Powered by a robust **Room Database** (v2 Schema) ensuring offline-first reliability, data integrity, and atomic transactional writes.
 * **Navigation**: Type-safe declarative composable routing for fluent, reliable screen transitions.

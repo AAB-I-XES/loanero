@@ -7,9 +7,16 @@ import com.example.data.Loan
 import com.example.data.LoanRepository
 import com.example.data.Member
 import com.example.data.Repayment
+import com.example.data.SupabaseSyncManager
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
+
+data class GoogleUserProfile(
+    val name: String,
+    val email: String,
+    val photoUrl: String? = null
+)
 
 data class MemberSummary(
     val member: Member,
@@ -41,6 +48,14 @@ data class DashboardStats(
 )
 
 class LoanViewModel(private val repository: LoanRepository) : ViewModel() {
+
+    // Auth state
+    private val _currentUser = MutableStateFlow<GoogleUserProfile?>(null)
+    val currentUser: StateFlow<GoogleUserProfile?> = _currentUser.asStateFlow()
+
+    // Sync status state
+    private val _syncStatus = MutableStateFlow<String>("")
+    val syncStatus: StateFlow<String> = _syncStatus.asStateFlow()
 
     // Global lists from Database
     val members: StateFlow<List<Member>> = repository.allMembers
@@ -174,11 +189,34 @@ class LoanViewModel(private val repository: LoanRepository) : ViewModel() {
         }
     }
 
+    fun signInGoogle(name: String, email: String, photoUrl: String?, onComplete: () -> Unit) {
+        viewModelScope.launch {
+            _currentUser.value = GoogleUserProfile(name, email, photoUrl)
+            syncWithSupabase()
+            onComplete()
+        }
+    }
+
+    fun signOut() {
+        _currentUser.value = null
+    }
+
+    fun syncWithSupabase() {
+        viewModelScope.launch {
+            _syncStatus.value = "Starting sync..."
+            SupabaseSyncManager.syncAll(repository) { progress ->
+                _syncStatus.value = progress
+            }
+        }
+    }
+
     // Operations / Actions
     fun addMember(name: String, phone: String, email: String, notes: String, onComplete: (Int) -> Unit = {}) {
         viewModelScope.launch {
             val member = Member(name = name, phone = phone, email = email, notes = notes)
             val newId = repository.insertMember(member)
+            val savedMember = member.copy(id = newId.toInt())
+            SupabaseSyncManager.pushMember(savedMember)
             onComplete(newId.toInt())
         }
     }
@@ -186,12 +224,15 @@ class LoanViewModel(private val repository: LoanRepository) : ViewModel() {
     fun updateMember(member: Member) {
         viewModelScope.launch {
             repository.updateMember(member)
+            SupabaseSyncManager.pushMember(member)
         }
     }
 
     fun toggleMonthlyCollected(member: Member) {
         viewModelScope.launch {
-            repository.updateMember(member.copy(isMonthlyCollected = !member.isMonthlyCollected))
+            val updated = member.copy(isMonthlyCollected = !member.isMonthlyCollected)
+            repository.updateMember(updated)
+            SupabaseSyncManager.pushMember(updated)
         }
     }
 
@@ -199,7 +240,9 @@ class LoanViewModel(private val repository: LoanRepository) : ViewModel() {
         viewModelScope.launch {
             members.value.forEach { member ->
                 if (member.isMonthlyCollected) {
-                    repository.updateMember(member.copy(isMonthlyCollected = false))
+                    val updated = member.copy(isMonthlyCollected = false)
+                    repository.updateMember(updated)
+                    SupabaseSyncManager.pushMember(updated)
                 }
             }
         }
@@ -208,6 +251,7 @@ class LoanViewModel(private val repository: LoanRepository) : ViewModel() {
     fun deleteMember(member: Member) {
         viewModelScope.launch {
             repository.deleteMember(member)
+            SupabaseSyncManager.deleteMember(member.id)
         }
     }
 
@@ -232,6 +276,8 @@ class LoanViewModel(private val repository: LoanRepository) : ViewModel() {
                 startDate = startDate
             )
             val newId = repository.insertLoan(loan)
+            val savedLoan = loan.copy(id = newId.toInt())
+            SupabaseSyncManager.pushLoan(savedLoan)
             onComplete(newId.toInt())
         }
     }
@@ -239,18 +285,22 @@ class LoanViewModel(private val repository: LoanRepository) : ViewModel() {
     fun updateLoan(loan: Loan) {
         viewModelScope.launch {
             repository.updateLoan(loan)
+            SupabaseSyncManager.pushLoan(loan)
         }
     }
 
     fun deleteLoan(loan: Loan) {
         viewModelScope.launch {
             repository.deleteLoan(loan)
+            SupabaseSyncManager.deleteLoan(loan.id)
         }
     }
 
     fun toggleLoanFinished(loan: Loan) {
         viewModelScope.launch {
-            repository.updateLoan(loan.copy(isFinished = !loan.isFinished))
+            val updated = loan.copy(isFinished = !loan.isFinished)
+            repository.updateLoan(updated)
+            SupabaseSyncManager.pushLoan(updated)
         }
     }
 
@@ -262,7 +312,9 @@ class LoanViewModel(private val repository: LoanRepository) : ViewModel() {
                 paymentDate = paymentDate,
                 notes = notes
             )
-            repository.insertRepayment(repayment)
+            val newId = repository.insertRepayment(repayment)
+            val savedRepayment = repayment.copy(id = newId.toInt())
+            SupabaseSyncManager.pushRepayment(savedRepayment)
             onComplete()
         }
     }
@@ -270,6 +322,7 @@ class LoanViewModel(private val repository: LoanRepository) : ViewModel() {
     fun deleteRepayment(repayment: Repayment) {
         viewModelScope.launch {
             repository.deleteRepayment(repayment)
+            SupabaseSyncManager.deleteRepayment(repayment.id)
         }
     }
 

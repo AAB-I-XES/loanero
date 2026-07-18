@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.ui.DashboardStats
 import com.example.ui.MemberSummary
+import com.example.ui.GoogleUserProfile
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -35,9 +36,14 @@ fun DashboardScreen(
     memberSummaries: List<MemberSummary>,
     onMemberClick: (Int) -> Unit,
     onAddMemberClick: () -> Unit,
+    currentUser: GoogleUserProfile?,
+    syncStatus: String,
+    onSyncClick: () -> Unit,
+    onSignOutClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     var searchQuery by remember { mutableStateOf("") }
+    var menuExpanded by remember { mutableStateOf(false) }
 
     val filteredMembers = remember(searchQuery, memberSummaries) {
         if (searchQuery.isBlank()) {
@@ -101,25 +107,102 @@ fun DashboardScreen(
                         }
                     }
                     
-                    // Profile Image placeholder
-                    Box(
-                        modifier = Modifier
-                            .size(40.dp)
-                            .background(MaterialTheme.colorScheme.surface, CircleShape)
-                            .border(1.dp, MaterialTheme.colorScheme.outlineVariant, CircleShape),
-                        contentAlignment = Alignment.Center
-                    ) {
+                    // Profile Image with Sync / Sign-out Dropdown
+                    Box {
                         Box(
                             modifier = Modifier
-                                .size(32.dp)
-                                .background(MaterialTheme.colorScheme.primaryContainer, CircleShape),
+                                .size(40.dp)
+                                .background(MaterialTheme.colorScheme.surface, CircleShape)
+                                .border(1.dp, MaterialTheme.colorScheme.outlineVariant, CircleShape)
+                                .clickable { menuExpanded = true }
+                                .testTag("user_profile_badge"),
                             contentAlignment = Alignment.Center
                         ) {
-                            Text(
-                                text = "ME",
-                                style = MaterialTheme.typography.labelSmall,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.onPrimaryContainer
+                            Box(
+                                modifier = Modifier
+                                    .size(32.dp)
+                                    .background(MaterialTheme.colorScheme.primaryContainer, CircleShape),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                val initial = if (!currentUser?.name.isNullOrBlank()) currentUser?.name?.take(2)?.uppercase() else "ME"
+                                Text(
+                                    text = initial ?: "ME",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                                )
+                            }
+                        }
+
+                        DropdownMenu(
+                            expanded = menuExpanded,
+                            onDismissRequest = { menuExpanded = false },
+                            modifier = Modifier.width(260.dp)
+                        ) {
+                            Column(
+                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
+                            ) {
+                                Text(
+                                    text = currentUser?.name ?: "Offline User",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.onSurface
+                                )
+                                Text(
+                                    text = currentUser?.email ?: "local.sandbox@circlecredit",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+
+                                if (syncStatus.isNotEmpty()) {
+                                    Spacer(modifier = Modifier.height(10.dp))
+                                    Surface(
+                                        color = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.4f),
+                                        shape = RoundedCornerShape(8.dp),
+                                        modifier = Modifier.fillMaxWidth()
+                                    ) {
+                                        Text(
+                                            text = syncStatus,
+                                            style = MaterialTheme.typography.labelSmall,
+                                            color = MaterialTheme.colorScheme.onSecondaryContainer,
+                                            modifier = Modifier.padding(8.dp),
+                                            lineHeight = 14.sp
+                                        )
+                                    }
+                                }
+                            }
+
+                            HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
+
+                            DropdownMenuItem(
+                                text = { Text("Sync with Supabase", fontWeight = FontWeight.SemiBold) },
+                                onClick = {
+                                    menuExpanded = false
+                                    onSyncClick()
+                                },
+                                leadingIcon = {
+                                    Icon(
+                                        imageVector = Icons.Rounded.CloudDone,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(20.dp)
+                                    )
+                                }
+                            )
+
+                            DropdownMenuItem(
+                                text = { Text("Sign Out", color = MaterialTheme.colorScheme.error, fontWeight = FontWeight.SemiBold) },
+                                onClick = {
+                                    menuExpanded = false
+                                    onSignOutClick()
+                                },
+                                leadingIcon = {
+                                    Icon(
+                                        imageVector = Icons.Rounded.ExitToApp,
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.error,
+                                        modifier = Modifier.size(20.dp)
+                                    )
+                                }
                             )
                         }
                     }

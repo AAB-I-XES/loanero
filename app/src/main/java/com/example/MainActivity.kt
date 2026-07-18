@@ -89,12 +89,26 @@ class MainActivity : ComponentActivity() {
         ) { innerPadding ->
           NavHost(
             navController = navController,
-            startDestination = "dashboard",
+            startDestination = "login",
             modifier = Modifier.padding(innerPadding)
           ) {
+            composable("login") {
+              LoginScreen(
+                onLoginSuccess = { name, email, photoUrl ->
+                  viewModel.signInGoogle(name, email, photoUrl) {
+                    navController.navigate("dashboard") {
+                      popUpTo("login") { inclusive = true }
+                    }
+                  }
+                }
+              )
+            }
+
             composable("dashboard") {
               val stats by viewModel.dashboardStats.collectAsState()
               val summaries by viewModel.memberSummaries.collectAsState()
+              val user by viewModel.currentUser.collectAsState()
+              val syncLog by viewModel.syncStatus.collectAsState()
 
               DashboardScreen(
                 stats = stats,
@@ -104,6 +118,15 @@ class MainActivity : ComponentActivity() {
                 },
                 onAddMemberClick = {
                   navController.navigate("add_member")
+                },
+                currentUser = user,
+                syncStatus = syncLog,
+                onSyncClick = { viewModel.syncWithSupabase() },
+                onSignOutClick = {
+                  viewModel.signOut()
+                  navController.navigate("login") {
+                    popUpTo("dashboard") { inclusive = true }
+                  }
                 }
               )
             }
